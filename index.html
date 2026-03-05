@@ -16,10 +16,7 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  html, body {
-    width: 100%;
-    height: 100%;
-  }
+  html, body { width:100%; height:100%; }
 
   body {
     background: var(--navy);
@@ -133,7 +130,8 @@
     color: var(--gold);
     margin-bottom: 7px;
   }
-  .fg input {
+  .fg input[type="text"],
+  .fg input[type="password"] {
     width: 100%;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(255,255,255,.12);
@@ -153,6 +151,46 @@
     box-shadow: 0 0 0 3px rgba(200,168,75,.15);
   }
   .fg input::placeholder { color: rgba(255,255,255,.25); }
+
+  /* ── Lembrar login ── */
+  .remember-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .remember-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border: 1.5px solid rgba(200,168,75,.45);
+    border-radius: 5px;
+    background: rgba(255,255,255,.04);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background .2s, border-color .2s;
+  }
+  .remember-row input[type="checkbox"]:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .remember-row input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 6px; height: 10px;
+    border: 2px solid var(--navy);
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+  }
+  .remember-row span {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .5px;
+  }
 
   .btn-primary {
     width: 100%;
@@ -292,6 +330,32 @@
     border: none;
     display: block;
   }
+
+  /* ── Botão Sair (flutuante sobre o iframe) ── */
+  #btn-sair {
+    display: none;
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 1100;
+    background: rgba(10,22,40,.85);
+    border: 1px solid rgba(200,168,75,.35);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background .2s, opacity .2s;
+    opacity: .75;
+  }
+  #btn-sair:hover { opacity: 1; background: rgba(10,22,40,.97); }
+  #btn-sair.show { display: block; }
 </style>
 </head>
 <body>
@@ -323,6 +387,13 @@
                placeholder="••••••••••"
                autocomplete="current-password">
       </div>
+
+      <!-- LEMBRAR LOGIN -->
+      <label class="remember-row">
+        <input type="checkbox" id="chk-lembrar" checked>
+        <span>Lembrar meu login neste dispositivo</span>
+      </label>
+
       <button class="btn-primary" onclick="fazerLogin()">&#128274; Entrar</button>
       <div class="error-msg" id="erro-msg">
         RE ou senha incorretos.<br>Verifique os dados e tente novamente.
@@ -348,6 +419,9 @@
   <iframe id="tci-frame" src="" allow="fullscreen; camera; microphone"></iframe>
 </div>
 
+<!-- BOTÃO SAIR (sobre o iframe) -->
+<button id="btn-sair" onclick="fazerLogout()">&#128275; Sair</button>
+
 <script>
 /* ─── POLICIAIS AUTORIZADOS ─────────────────────── */
 var POLICIAIS = [
@@ -366,8 +440,44 @@ var POLICIAIS = [
   { re: '127433-3',  nome: 'RUBENS',           grad: 'CB PM'     },
 ];
 
-var SENHA    = '5ciatci2026';
-var URL_DEST = 'https://paineltci.vercel.app/';
+var SENHA      = '5ciatci2026';
+var URL_DEST   = 'https://paineltci.vercel.app/';
+var STORAGE_KEY = 'tci2026_sessao';
+
+/* ─── AUTO-LOGIN ao carregar a página ──────────── */
+window.addEventListener('DOMContentLoaded', function () {
+  try {
+    var salvo = localStorage.getItem(STORAGE_KEY);
+    if (salvo) {
+      var dados = JSON.parse(salvo);
+      // Valida se o RE ainda está na lista autorizada
+      var policial = buscarPolicial(dados.re);
+      if (policial && dados.senha === SENHA) {
+        // Preenche os campos (visualmente) e entra direto
+        document.getElementById('inp-re').value    = dados.re;
+        document.getElementById('inp-senha').value = dados.senha;
+        exibirBoasVindas(policial);
+        return;
+      } else {
+        // Dado salvo inválido — limpa
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+  } catch (e) {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+});
+
+/* ─── BUSCA POLICIAL POR RE ─────────────────────── */
+function buscarPolicial(re) {
+  var reNorm = re.replace(/\s/g, '').toUpperCase();
+  for (var i = 0; i < POLICIAIS.length; i++) {
+    if (POLICIAIS[i].re.replace(/\s/g, '').toUpperCase() === reNorm) {
+      return POLICIAIS[i];
+    }
+  }
+  return null;
+}
 
 /* ─── LOGIN ─────────────────────────────────────── */
 function fazerLogin() {
@@ -375,14 +485,9 @@ function fazerLogin() {
   var senha = document.getElementById('inp-senha').value;
   var card  = document.getElementById('login-card');
   var erro  = document.getElementById('erro-msg');
+  var lembrar = document.getElementById('chk-lembrar').checked;
 
-  var policial = null;
-  for (var i = 0; i < POLICIAIS.length; i++) {
-    if (POLICIAIS[i].re.replace(/\s/g,'').toUpperCase() === re) {
-      policial = POLICIAIS[i];
-      break;
-    }
-  }
+  var policial = buscarPolicial(re);
 
   if (!policial || senha !== SENHA) {
     erro.classList.add('show');
@@ -394,6 +499,16 @@ function fazerLogin() {
   }
 
   erro.classList.remove('show');
+
+  // Salva no localStorage se marcado
+  if (lembrar) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ re: policial.re, senha: senha }));
+    } catch (e) { /* sem suporte ao storage — ignora */ }
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
   exibirBoasVindas(policial);
 }
 
@@ -423,6 +538,23 @@ function abrirPainel() {
   var frame = document.getElementById('tci-frame');
   frame.src = URL_DEST;
   app.style.display = 'block';
+  document.getElementById('btn-sair').classList.add('show');
+}
+
+/* ─── LOGOUT ────────────────────────────────────── */
+function fazerLogout() {
+  if (!confirm('Deseja sair e trocar de usuário?')) return;
+
+  // Remove sessão salva
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+
+  // Reseta tela
+  document.getElementById('app-screen').style.display  = 'none';
+  document.getElementById('btn-sair').classList.remove('show');
+  document.getElementById('tci-frame').src = '';
+  document.getElementById('inp-re').value    = '';
+  document.getElementById('inp-senha').value = '';
+  document.getElementById('login-screen').style.display = 'flex';
 }
 
 /* ─── ENTER ─────────────────────────────────────── */
