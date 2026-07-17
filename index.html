@@ -1,566 +1,618 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TCI 2026 — Acesso Restrito</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy:  #0a1628;
-    --navy2: #0f1f3d;
-    --gold:  #c8a84b;
-    --gold2: #e8c96b;
-    --muted: #8a9ab5;
-    --white: #f5f7fa;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Painel TCI 2026 – 2º BPM/I</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&family=Exo+2:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:     #c9a227;
+      --dark:     #0b0d12;
+      --neon-blu: #1e90ff;
+      --neon-red: #ff2244;
+      --neon-grn: #00e676;
+      --neon-gld: #ffc400;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; background: var(--dark); font-family: 'Exo 2', sans-serif; overflow-x: hidden; }
 
-  html, body { width:100%; height:100%; }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        repeating-linear-gradient(0deg,   transparent, transparent 49px, rgba(30,144,255,.04) 50px),
+        repeating-linear-gradient(90deg,  transparent, transparent 49px, rgba(30,144,255,.04) 50px);
+      pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,.13) 3px, rgba(0,0,0,.13) 4px);
+      pointer-events: none; z-index: 1;
+    }
 
-  body {
-    background: var(--navy);
-    color: var(--white);
-    font-family: 'Source Sans 3', sans-serif;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow-x: hidden;
-  }
+    .wrapper {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 28px 18px 40px;
+    }
 
-  body::before {
-    content:''; position:fixed; inset:0;
-    background-image:
-      repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.01) 40px,rgba(255,255,255,.01) 41px),
-      repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,.01) 40px,rgba(255,255,255,.01) 41px);
-    pointer-events:none; z-index:0;
-  }
+    /* ── LOGO ── */
+    .logo-wrap {
+      width: 100px; height: 100px;
+      border-radius: 50%; overflow: hidden;
+      border: 2px solid rgba(201,162,39,.45);
+      box-shadow: 0 0 0 4px rgba(201,162,39,.1), 0 0 22px rgba(201,162,39,.35), 0 0 50px rgba(201,162,39,.12);
+      margin-bottom: 12px;
+      animation: logo-pulse 4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes logo-pulse {
+      0%,100%{box-shadow:0 0 0 4px rgba(201,162,39,.1),0 0 22px rgba(201,162,39,.35),0 0 50px rgba(201,162,39,.12)}
+      50%{box-shadow:0 0 0 6px rgba(201,162,39,.18),0 0 32px rgba(201,162,39,.55),0 0 70px rgba(201,162,39,.22)}
+    }
+    .logo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
 
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes shake  { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @keyframes popIn  { 0%{opacity:0;transform:scale(.8)} 60%{transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }
+    /* ── HEADER ── */
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.1rem, 5vw, 1.45rem);
+      font-weight: 900; letter-spacing: .14em; text-transform: uppercase;
+      color: #fff; text-align: center;
+      text-shadow: 0 0 10px var(--neon-blu), 0 0 28px rgba(30,144,255,.55), 0 2px 4px rgba(0,0,0,.9);
+      margin-bottom: 4px;
+      animation: flicker 7s infinite;
+    }
+    .subtitle {
+      font-family: 'Rajdhani', sans-serif; font-size: .78rem; font-weight: 600;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(201,162,39,.65); text-align: center; margin-bottom: 20px;
+    }
+    @keyframes flicker {
+      0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.6} 94%{opacity:1} 97%{opacity:.8} 98%{opacity:1}
+    }
 
-  /* =========================================================
-     LOGIN
-  ========================================================= */
-  #login-screen {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    padding: 24px 20px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeUp .5s ease;
-    overflow-y: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    justify-content: center;
-  }
+    /* ── HERO ── */
+    .hero-wrap {
+      width: 100%; max-width: 400px;
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(201,162,39,.2);
+      box-shadow: 0 0 30px rgba(0,0,0,.7);
+      margin-bottom: 22px;
+    }
+    .hero-wrap img { width:100%; display:block; filter:brightness(.92) contrast(1.06); }
 
-  .login-inner {
-    width: 100%;
-    max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .divider {
+      width: 70%; max-width: 280px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,162,39,.55), transparent);
+      margin-bottom: 22px;
+    }
 
-  .login-badge {
-    width: 92px; height: 92px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Oswald', sans-serif;
-    color: var(--navy);
-    text-align: center;
-    line-height: 1.3;
-    margin-bottom: 20px;
-    box-shadow: 0 0 48px rgba(200,168,75,.55), 0 0 0 6px rgba(200,168,75,.12);
-    padding: 8px;
-  }
-  .lb1 { font-size: 9px; font-weight: 600; opacity: .75; }
-  .lb2 { font-size: 17px; font-weight: 700; }
-  .lb3 { font-size: 11px; font-weight: 600; }
+    /* ── TREINO ATUAL CARD ── */
+    .treino-card {
+      width: 100%; max-width: 400px;
+      background: linear-gradient(135deg, #0a1020 0%, #0f1828 100%);
+      border: 1px solid rgba(30,144,255,.3);
+      border-radius: 14px;
+      padding: 16px 18px 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 18px rgba(30,144,255,.15), 0 0 40px rgba(30,144,255,.06);
+      text-align: center;
+    }
+    .treino-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .7rem; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(30,144,255,.7);
+      margin-bottom: 4px;
+    }
+    .treino-nome {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.3rem, 6vw, 1.8rem);
+      font-weight: 900; color: #fff;
+      text-shadow: 0 0 12px var(--neon-blu), 0 0 30px rgba(30,144,255,.4);
+      margin-bottom: 2px;
+    }
+    .treino-periodo {
+      font-family: 'Exo 2', sans-serif; font-size: .8rem; font-weight: 600;
+      color: rgba(126,200,255,.7); letter-spacing: .06em;
+      margin-bottom: 14px;
+    }
+    .treino-sem {
+      font-family: 'Rajdhani', sans-serif; font-size: .95rem;
+      color: rgba(201,162,39,.75); letter-spacing: .08em;
+    }
 
-  .login-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 4px;
-  }
-  .login-title span { color: var(--gold); }
+    /* ── BUTTONS ── */
+    .btn-group { display:flex; flex-direction:column; gap:14px; width:100%; max-width:400px; }
 
-  .login-sub {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: center;
-    margin-bottom: 28px;
-  }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 17px 20px;
+      border: none; border-radius: 50px; cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.95rem, 4vw, 1.1rem);
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; text-align: center;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    }
+    .btn:active { transform: scale(.97); }
 
-  .login-card {
-    width: 100%;
-    background: var(--navy2);
-    border: 1px solid rgba(200,168,75,.25);
-    border-radius: 14px;
-    padding: 28px 22px;
-    box-shadow: 0 24px 64px rgba(0,0,0,.6);
-  }
-  .login-card.shake { animation: shake .4s ease; }
+    /* Vídeo Instrução – verde neon (treino atual) */
+    .btn-treino {
+      background: linear-gradient(135deg, #041408 0%, #081f0c 100%);
+      color: #6effa0;
+      border: 1.5px solid rgba(0,230,118,.5);
+      box-shadow: 0 0 8px rgba(0,230,118,.45), 0 0 22px rgba(0,230,118,.22), 0 0 50px rgba(0,230,118,.1), inset 0 0 14px rgba(0,230,118,.06);
+    }
 
-  .fg { margin-bottom: 18px; }
-  .fg label {
-    display: block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 7px;
-  }
-  .fg input[type="text"],
-  .fg input[type="password"] {
-    width: 100%;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 8px;
-    padding: 13px 16px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 16px;
-    color: var(--white);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-    letter-spacing: 1px;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .fg input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(200,168,75,.15);
-  }
-  .fg input::placeholder { color: rgba(255,255,255,.25); }
+    /* Calendário – azul neon */
+    .btn-cal {
+      background: linear-gradient(135deg, #080f1e 0%, #0c1a30 100%);
+      color: #7ec8ff;
+      border: 1.5px solid rgba(30,144,255,.5);
+      box-shadow: 0 0 8px rgba(30,144,255,.45), 0 0 22px rgba(30,144,255,.22), 0 0 50px rgba(30,144,255,.1), inset 0 0 14px rgba(30,144,255,.06);
+    }
 
-  /* ── Lembrar login ── */
-  .remember-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .remember-row input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px; height: 18px;
-    border: 1.5px solid rgba(200,168,75,.45);
-    border-radius: 5px;
-    background: rgba(255,255,255,.04);
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-    transition: background .2s, border-color .2s;
-  }
-  .remember-row input[type="checkbox"]:checked {
-    background: var(--gold);
-    border-color: var(--gold);
-  }
-  .remember-row input[type="checkbox"]:checked::after {
-    content: '';
-    position: absolute;
-    left: 4px; top: 1px;
-    width: 6px; height: 10px;
-    border: 2px solid var(--navy);
-    border-top: none; border-left: none;
-    transform: rotate(45deg);
-  }
-  .remember-row span {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: .5px;
-  }
+    /* Controle de Treinamento – vermelho neon */
+    .btn-ctrl {
+      background: linear-gradient(135deg, #180808 0%, #270b0b 100%);
+      color: #ff8899;
+      border: 1.5px solid rgba(255,34,68,.5);
+      box-shadow: 0 0 8px rgba(255,34,68,.45), 0 0 22px rgba(255,34,68,.22), 0 0 50px rgba(255,34,68,.1), inset 0 0 14px rgba(255,34,68,.06);
+    }
 
-  .btn-primary {
-    width: 100%;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border: none;
-    border-radius: 8px;
-    padding: 15px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--navy);
-    cursor: pointer;
-    transition: opacity .2s, transform .1s;
-    margin-top: 6px;
-    -webkit-appearance: none;
-  }
-  .btn-primary:active { transform: scale(.97); opacity: .88; }
+    .btn-icon { font-size: 1.2em; flex-shrink: 0; }
 
-  .error-msg {
-    background: rgba(178,34,34,.15);
-    border: 1px solid rgba(178,34,34,.4);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #ff8080;
-    text-align: center;
-    margin-top: 14px;
-    display: none;
-  }
-  .error-msg.show { display: block; }
+    /* POP e Material – neon dourado */
+    .btn-pop {
+      background: linear-gradient(135deg, #1a1200 0%, #241800 100%);
+      color: #ffd966;
+      border: 1.5px solid rgba(255,196,0,.5);
+      box-shadow: 0 0 8px rgba(255,196,0,.45), 0 0 22px rgba(255,196,0,.22), 0 0 50px rgba(255,196,0,.1), inset 0 0 14px rgba(255,196,0,.06);
+    }
 
-  .footer-label {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-top: 22px;
-    text-align: center;
-    opacity: .7;
-  }
+    /* ── MODAL POP ── */
+    .pop-section-title {
+      font-family: 'Rajdhani', sans-serif; font-size: .72rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,196,0,.6);
+      padding: 12px 18px 6px;
+      border-top: 1px solid rgba(255,196,0,.1);
+      background: rgba(255,196,0,.04);
+    }
+    .pop-section-title:first-child { border-top: none; }
 
-  /* =========================================================
-     BOAS-VINDAS
-  ========================================================= */
-  #welcome-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--navy);
-    z-index: 900;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 32px;
-  }
-  #welcome-overlay.show { display: flex; animation: fadeIn .35s ease; }
+    .pop-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 18px;
+      border-top: 1px solid rgba(255,255,255,.04);
+      text-decoration: none;
+      gap: 12px;
+      transition: background .15s;
+    }
+    .pop-item:hover, .pop-item:active { background: rgba(255,196,0,.07); }
 
-  .wc-badge {
-    width: 100px; height: 100px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 46px;
-    margin-bottom: 24px;
-    animation: popIn .6s cubic-bezier(.34,1.56,.64,1) .1s both;
-    box-shadow: 0 0 64px rgba(200,168,75,.55);
-  }
+    .pop-item-info { flex: 1; min-width: 0; }
+    .pop-item-nome {
+      font-family: 'Rajdhani', sans-serif; font-size: .95rem; font-weight: 700;
+      letter-spacing: .04em; color: #e8d48a; line-height: 1.3;
+    }
+    .pop-item-desc {
+      font-family: 'Exo 2', sans-serif; font-size: .7rem;
+      color: rgba(200,180,120,.5); margin-top: 2px;
+    }
+    .pop-badge {
+      font-family: 'Rajdhani', sans-serif; font-size: .68rem; font-weight: 700;
+      letter-spacing: .08em; padding: 3px 10px; border-radius: 20px;
+      background: rgba(255,196,0,.12); color: rgba(255,196,0,.8);
+      border: 1px solid rgba(255,196,0,.25); white-space: nowrap; flex-shrink: 0;
+    }
 
-  .wc-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-    animation: fadeUp .4s ease .25s both;
-  }
-  .wc-name {
-    font-family: 'Oswald', sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--gold2);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    animation: fadeUp .4s ease .35s both;
-  }
-  .wc-grad {
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-    animation: fadeUp .4s ease .4s both;
-  }
-  .wc-bar-wrap {
-    width: 220px; height: 4px;
-    background: rgba(255,255,255,.08);
-    border-radius: 99px;
-    overflow: hidden;
-    animation: fadeIn .3s ease .45s both;
-  }
-  .wc-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold2));
-    border-radius: 99px;
-    width: 0%;
-    transition: width 1.9s linear;
-  }
-  .wc-info {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    margin-top: 14px;
-    animation: fadeIn .3s ease .5s both;
-  }
+    /* ── MODAL CALENDÁRIO ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(4px);
+      align-items: flex-start; justify-content: center;
+      overflow-y: auto; padding: 20px 14px 40px;
+    }
+    .modal-overlay.open { display: flex; }
 
-  /* =========================================================
-     IFRAME
-  ========================================================= */
-  #app-screen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: #000;
-  }
-  #tci-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
+    .modal {
+      width: 100%; max-width: 440px;
+      background: linear-gradient(160deg, #13182a 0%, #0d1117 100%);
+      border: 1px solid rgba(201,162,39,.25);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04) inset;
+      margin: auto;
+    }
+    .modal-header {
+      padding: 16px 18px 14px;
+      background: linear-gradient(135deg, #0c1428 0%, #0a1020 100%);
+      border-bottom: 1px solid rgba(201,162,39,.2);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title {
+      font-family: 'Orbitron', sans-serif; font-size: .95rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
+      text-shadow: 0 0 10px rgba(201,162,39,.4);
+    }
+    .modal-close {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.6); border-radius: 50%;
+      width: 32px; height: 32px; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .modal-close:hover { background: rgba(255,34,68,.2); color: #ff8899; }
 
-  /* ── Botão Sair (flutuante sobre o iframe) ── */
-  #btn-sair {
-    display: none;
-    position: fixed;
-    bottom: 18px;
-    right: 18px;
-    z-index: 1100;
-    background: rgba(10,22,40,.85);
-    border: 1px solid rgba(200,168,75,.35);
-    border-radius: 8px;
-    padding: 9px 16px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--gold);
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: background .2s, opacity .2s;
-    opacity: .75;
-  }
-  #btn-sair:hover { opacity: 1; background: rgba(10,22,40,.97); }
-  #btn-sair.show { display: block; }
-</style>
+    .mes-bloco { border-bottom: 1px solid rgba(255,255,255,.06); }
+    .mes-header {
+      padding: 12px 18px 10px;
+      font-family: 'Rajdhani', sans-serif; font-size: .85rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(201,162,39,.8);
+      background: rgba(201,162,39,.05);
+    }
+    .treino-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 18px;
+      border-top: 1px solid rgba(255,255,255,.04);
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .treino-item:hover, .treino-item:active { background: rgba(30,144,255,.08); }
+    .treino-item.ativo { background: rgba(0,230,118,.07); border-left: 3px solid var(--neon-grn); }
+
+    .ti-nome {
+      font-family: 'Rajdhani', sans-serif; font-size: .95rem; font-weight: 700;
+      letter-spacing: .06em; color: #ccdcf0;
+    }
+    .treino-item.ativo .ti-nome { color: #6effa0; }
+    .ti-periodo { font-family: 'Exo 2', sans-serif; font-size: .72rem; color: rgba(180,200,220,.5); margin-top: 1px; }
+
+    .ti-badge {
+      font-family: 'Rajdhani', sans-serif; font-size: .7rem; font-weight: 700;
+      letter-spacing: .1em; padding: 3px 10px; border-radius: 20px;
+      background: rgba(30,144,255,.15); color: rgba(126,200,255,.8);
+      border: 1px solid rgba(30,144,255,.25); white-space: nowrap;
+    }
+    .treino-item.ativo .ti-badge {
+      background: rgba(0,230,118,.15); color: #6effa0;
+      border-color: rgba(0,230,118,.35);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 26px; font-size: .62rem; letter-spacing: .15em;
+      text-transform: uppercase; color: rgba(184,192,204,.2);
+      text-align: center; line-height: 1.9;
+    }
+  </style>
 </head>
 <body>
+<div class="wrapper">
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-inner">
+  <!-- LOGO -->
+  <div class="logo-wrap">
+    <img src="https://github.com/user-attachments/assets/007891b3-7371-4c47-98b1-4e78481c7565"
+         alt="Logo 2º BPM/I"
+         onerror="this.parentElement.style.background='#1a1f2c'"/>
+  </div>
 
-    <div class="login-badge">
-      <span class="lb1">2º BPM/I</span>
-      <span class="lb2">5ª CIA</span>
-      <span class="lb3">TCI 2026</span>
-    </div>
+  <div class="title">Painel TCI 2026</div>
+  <div class="subtitle">2º BPM/I &nbsp;·&nbsp; Polícia Militar &nbsp;·&nbsp; SP</div>
 
-    <div class="login-title">Painel <span>TCI</span></div>
-    <div class="login-sub">2º BPM/I &middot; 5ª CIA &middot; Acesso Restrito</div>
+  <!-- HERO -->
+  <div class="hero-wrap">
+    <img src="https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/brasao_2bpmi.png"
+         alt="Brasão 2º BPM/I"
+         onerror="this.parentElement.style.display='none'"/>
+  </div>
 
-    <div class="login-card" id="login-card">
-      <div class="fg">
-        <label>RE — Registro de Efetivo</label>
-        <input type="text" id="inp-re"
-               placeholder="Ex: 123456-0"
-               autocomplete="off" autocorrect="off"
-               autocapitalize="off" spellcheck="false">
-      </div>
-      <div class="fg">
-        <label>Senha</label>
-        <input type="password" id="inp-senha"
-               placeholder="••••••••••"
-               autocomplete="current-password">
-      </div>
+  <div class="divider"></div>
 
-      <!-- LEMBRAR LOGIN -->
-      <label class="remember-row">
-        <input type="checkbox" id="chk-lembrar" checked>
-        <span>Lembrar meu login neste dispositivo</span>
-      </label>
+  <!-- TREINO ATUAL -->
+  <div class="treino-card">
+    <div class="treino-label">📅 Treino em vigor hoje</div>
+    <div class="treino-nome" id="treino-nome">—</div>
+    <div class="treino-periodo" id="treino-periodo"></div>
+    <div class="treino-sem" id="treino-sem"></div>
+  </div>
 
-      <button class="btn-primary" onclick="fazerLogin()">&#128274; Entrar</button>
-      <div class="error-msg" id="erro-msg">
-        RE ou senha incorretos.<br>Verifique os dados e tente novamente.
-      </div>
-    </div>
+  <!-- BOTÕES -->
+  <div class="btn-group">
+    <a id="btn-treino-atual" class="btn btn-treino" href="#" target="_blank" rel="noopener noreferrer">
+      <span class="btn-icon">▶</span>Vídeo Instrução – Treino Atual
+    </a>
 
-    <div class="footer-label">Acesso exclusivo para instrutores TCI 2026</div>
+    <button class="btn btn-cal" onclick="abrirCalendario()">
+      <span class="btn-icon">📋</span>Calendário Completo TCI
+    </button>
+
+    <a class="btn btn-ctrl"
+       href="https://docs.google.com/forms/d/1ip8HkvoE2X8MpOoomHBASgjlcBFrZoLApZfqeESO6Zc/edit"
+       target="_blank" rel="noopener noreferrer">
+      <span class="btn-icon">✅</span>Controle de Treinamento
+    </a>
+
+    <button class="btn btn-pop" onclick="abrirPop()">
+      <span class="btn-icon">📚</span>POP e Material de Apoio
+    </button>
+  </div>
+
+  <div class="footer">
+    2º Batalhão de Polícia Militar do Interior<br/>
+    Escola de Educação Física &nbsp;·&nbsp; 2º Semestre 2026
   </div>
 </div>
 
-<!-- BOAS-VINDAS -->
-<div id="welcome-overlay">
-  <div class="wc-badge">&#11088;</div>
-  <div class="wc-title">Bem-vindo ao sistema TCI 2026</div>
-  <div class="wc-name" id="wc-nome"></div>
-  <div class="wc-grad" id="wc-grad"></div>
-  <div class="wc-bar-wrap"><div class="wc-bar-fill" id="wc-bar"></div></div>
-  <div class="wc-info">Carregando painel&hellip;</div>
+<!-- MODAL POP E MATERIAL DE APOIO -->
+<div class="modal-overlay" id="modal-pop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--neon-gld);text-shadow:0 0 10px rgba(255,196,0,.4)">📚 POP e Material de Apoio</div>
+      <button class="modal-close" onclick="fecharPop()">✕</button>
+    </div>
+    <div id="modal-pop-body">
+
+      <div class="pop-section-title">📷 Câmeras Operacionais Portáteis</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/12JZp96Ww6ORxmV9Jph965Dj4cOSNHLxZ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Manual da COP</div>
+          <div class="pop-item-desc">Cartilha do Patrulheiro</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1m2rbJ59-e-HgZnzYrXkdUJfYaEbtI9Zn/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">POP 5.16.00</div>
+          <div class="pop-item-desc">Câmeras operacionais portáteis (COP)</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1j7DTQlJwSbVQhlbnpMt9gl_KFNf83poB/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Câmeras Operacionais Portáteis</div>
+          <div class="pop-item-desc">Material complementar</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <div class="pop-section-title">🛡️ Normas e Regulamentos</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1P5C1i3sCTfQ26udG_Dbevoas_Eb_qcFo/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">M-3 - PM</div>
+          <div class="pop-item-desc">Manual de instrução</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1dnU7IsV4sJ6IJwnV4p6iVUCSBtrqRvPu/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Súmula ICC Nº 339/2023</div>
+          <div class="pop-item-desc">Uso seletivo e diferenciado da força</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1i3Y2SaVwgIY1775FTFuuelpsy9tANbIr/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Portaria do Ministro Nº 855/2025</div>
+          <div class="pop-item-desc">Norma ministerial vigente</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <div class="pop-section-title">⚖️ Defesa Pessoal</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1pFQEvnVn6EKQofkOMW8i_-pzVH1-wWbs/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Uso Seletivo e Diferenciado da Força</div>
+          <div class="pop-item-desc">Material de apoio – Defesa Pessoal</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <div class="pop-section-title">📋 Procedimentos Operacionais</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1U4nYOaV_pi2zhx993MY_ikN7QUqZO1py/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">POP 3.04.00</div>
+          <div class="pop-item-desc">Atendimento de ocorrência em horário de folga</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1iijsHLpMBAyimORhhNFA4TDoUUqpHWjQ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">Atendimento de Ocorrência em Horário de Folga</div>
+          <div class="pop-item-desc">Material complementar</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <div class="pop-section-title">🔫 Treino Semestral de Tiro</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/1nBoq-2d94tKSYUtWB2f0_wYVU3fQH4A5/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">2º Treino Semestral de Tiro</div>
+          <div class="pop-item-desc">Material e instruções</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+      <div class="pop-section-title">🚗 Direção Preventiva</div>
+
+      <a class="pop-item" href="https://drive.google.com/file/d/18veLfrwu4y4lCatwoguphwVFHQmYuML9/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <div class="pop-item-info">
+          <div class="pop-item-nome">2º Treino Semestral de Direção Preventiva</div>
+          <div class="pop-item-desc">Ministrado por policiais formados no CEP</div>
+        </div>
+        <div class="pop-badge">ACESSAR</div>
+      </a>
+
+    </div>
+  </div>
 </div>
 
-<!-- APP -->
-<div id="app-screen">
-  <iframe id="tci-frame" src="" allow="fullscreen; camera; microphone"></iframe>
+<!-- MODAL CALENDÁRIO -->
+<div class="modal-overlay" id="modal-cal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📅 Calendário TCI 2026</div>
+      <button class="modal-close" onclick="fecharCalendario()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
 </div>
-
-<!-- BOTÃO SAIR (sobre o iframe) -->
-<button id="btn-sair" onclick="fazerLogout()">&#128275; Sair</button>
 
 <script>
-/* ─── POLICIAIS AUTORIZADOS ─────────────────────── */
-var POLICIAIS = [
-  { re: '121876-0',  nome: 'JOSEMAR',         grad: 'CAP PM'    },
-  { re: '117404-5',  nome: 'ARCANJO',          grad: '1º TEN PM' },
-  { re: '117698-6',  nome: 'MARCOS',           grad: 'SUBTEN PM' },
-  { re: '106459-2',  nome: 'CLEVERSON',        grad: 'SUBTEN PM' },
-  { re: '103005-1',  nome: 'CARLOS HENRIQUE',  grad: 'SUBTEN PM' },
-  { re: '105535-6',  nome: 'DANTAS',           grad: 'SUBTEN PM' },
-  { re: '117660-9',  nome: 'ROCHA',            grad: 'SUBTEN PM' },
-  { re: '102962-2',  nome: 'TEIXEIRA',         grad: 'SUBTEN PM' },
-  { re: '125367-A',  nome: 'J. ALMEIDA',       grad: '1º SGT PM' },
-  { re: '109201-4',  nome: 'LOCATELLI',        grad: '1º SGT PM' },
-  { re: '119223-0',  nome: 'JHONNY',           grad: '1º SGT PM' },
-  { re: '135976-2',  nome: 'WILLIANS',         grad: '2º SGT PM' },
-  { re: '127433-3',  nome: 'RUBENS',           grad: 'CB PM'     },
+const TREINOS = [
+  { start: new Date(2026,6,1),  end: new Date(2026,6,4),  nome: "TREINO 01", periodo: "01 a 04 JUL", url: "https://drive.google.com/file/d/11KSNmdlRkcQQc-Kv2SKt3v9B_e1JW8cF/view?usp=drive_link" },
+  { start: new Date(2026,6,5),  end: new Date(2026,6,8),  nome: "TREINO 02", periodo: "05 a 08 JUL", url: "https://drive.google.com/file/d/1ugKFpNJgtElSri2dbNwNX_y7YCPRDUez/view?usp=drive_link" },
+  { start: new Date(2026,6,9),  end: new Date(2026,6,12), nome: "TREINO 03", periodo: "09 a 12 JUL", url: "https://drive.google.com/file/d/1vqEk07C5TYDwCPdJI8AQwYb1NdcO_kCy/view?usp=drive_link" },
+  { start: new Date(2026,6,13), end: new Date(2026,6,16), nome: "TREINO 04", periodo: "13 a 16 JUL", url: "https://drive.google.com/file/d/1x1667G_FE2-ZDkRL4tOzofJu6NDr7Nkt/view?usp=drive_link" },
+  { start: new Date(2026,6,17), end: new Date(2026,6,20), nome: "TREINO 05", periodo: "17 a 20 JUL", url: "https://drive.google.com/file/d/1M9NFET4ojdALaLjQjR7g3Ivrqj3jTGaF/view?usp=drive_link" },
+  { start: new Date(2026,6,21), end: new Date(2026,6,24), nome: "TREINO 06", periodo: "21 a 24 JUL", url: "https://drive.google.com/file/d/16FnZfpcED-kPUMsrPslz6qbkPrD90adI/view?usp=drive_link" },
+  { start: new Date(2026,6,25), end: new Date(2026,6,28), nome: "TREINO 07", periodo: "25 a 28 JUL", url: "https://drive.google.com/file/d/1hA-AFI1P-OAttnS4OMfmPhpXrHRiGANP/view?usp=drive_link" },
+  { start: new Date(2026,6,29), end: new Date(2026,7,1),  nome: "TREINO 08", periodo: "29 JUL a 01 AGO", url: "https://drive.google.com/file/d/1QH5WOrH3f0QEHbnAViXA__yMCB4eyBSN/view?usp=drive_link" },
+  { start: new Date(2026,7,2),  end: new Date(2026,7,5),  nome: "TREINO 09", periodo: "02 a 05 AGO", url: "https://drive.google.com/file/d/1op8lSuGVlGtLFoZPP1b8efPeYPJpt58b/view?usp=drive_link" },
+  { start: new Date(2026,7,6),  end: new Date(2026,7,9),  nome: "TREINO 10", periodo: "06 a 09 AGO", url: "https://drive.google.com/file/d/12x6wUymXeME2i6jLN5kt3S8jPvtgV67d/view?usp=drive_link" },
+  { start: new Date(2026,7,10), end: new Date(2026,7,13), nome: "TREINO 11", periodo: "10 a 13 AGO", url: "https://drive.google.com/file/d/1slG4ZxQL04lnM7aw6v9GK_Fqg0hs_UME/view?usp=drive_link" },
+  { start: new Date(2026,7,14), end: new Date(2026,7,17), nome: "TREINO 12", periodo: "14 a 17 AGO", url: "https://drive.google.com/file/d/1d8jakzFR09eTdJMhv0JTxBm6OxWCr30E/view?usp=drive_link" },
+  { start: new Date(2026,7,18), end: new Date(2026,7,21), nome: "TREINO 13", periodo: "18 a 21 AGO", url: "https://drive.google.com/file/d/1y2bEW-2uHK7wNCRPdk-I-MwJrf0PK4TP/view?usp=drive_link" },
+  { start: new Date(2026,7,22), end: new Date(2026,7,25), nome: "TREINO 14", periodo: "22 a 25 AGO", url: "https://drive.google.com/file/d/1z_nJNR4DXqB8KEyojatpiQHivQPPr5_D/view?usp=drive_link" },
+  { start: new Date(2026,7,26), end: new Date(2026,7,29), nome: "TREINO 15", periodo: "26 a 29 AGO", url: "https://drive.google.com/file/d/1Ot17vh5SQyJ2iQTohk__bb099b71P9Ce/view?usp=drive_link" },
+  { start: new Date(2026,7,30), end: new Date(2026,8,2),  nome: "TREINO 16", periodo: "30 AGO a 02 SET", url: "https://drive.google.com/file/d/1FyGCCBmB4qLeB2NZs08FPhA5xut9vU9O/view?usp=drive_link" },
+  { start: new Date(2026,8,3),  end: new Date(2026,8,6),  nome: "TREINO 17", periodo: "03 a 06 SET", url: "https://drive.google.com/file/d/1uVs4C13jbMUbBUdH51IzgV_kmdzNER4m/view?usp=drive_link" },
+  { start: new Date(2026,8,7),  end: new Date(2026,8,10), nome: "TREINO 18", periodo: "07 a 10 SET", url: "https://drive.google.com/file/d/1hOAnYl1LBKwgo4cHnUiFSwsAIGN3X_FS/view?usp=drive_link" },
+  { start: new Date(2026,8,11), end: new Date(2026,8,14), nome: "TREINO 19", periodo: "11 a 14 SET", url: "https://drive.google.com/file/d/1s28EibShekgP_Y72flMeTZYteOok_4X1/view?usp=drive_link" },
+  { start: new Date(2026,8,15), end: new Date(2026,8,18), nome: "TREINO 20", periodo: "15 a 18 SET", url: "https://drive.google.com/file/d/10UaPkWF-iTvA6BGbxBLGC490trAW-7bo/view?usp=drive_link" },
+  { start: new Date(2026,8,19), end: new Date(2026,8,22), nome: "TREINO 21", periodo: "19 a 22 SET", url: "https://drive.google.com/file/d/1vXRgLOkGqQB7tBoeYtMfi-IjcORPfYTV/view?usp=drive_link" },
+  { start: new Date(2026,8,23), end: new Date(2026,8,26), nome: "TREINO 22", periodo: "23 a 26 SET", url: "https://drive.google.com/file/d/1bN-1SgVnoBGypxfcH0SxchJnMJeHx6k_/view?usp=drive_link" },
+  { start: new Date(2026,8,27), end: new Date(2026,8,30), nome: "TREINO 23", periodo: "27 a 30 SET", url: "https://drive.google.com/file/d/1Eg2_ipfFDgVR28MDuPciigKXGuITQCpO/view?usp=drive_link" },
+  { start: new Date(2026,9,1),  end: new Date(2026,9,4),  nome: "TREINO 24", periodo: "01 a 04 OUT", url: "https://drive.google.com/file/d/1myJ5dUj2zHtwqueh-OeEwskqex0mpvxp/view?usp=drive_link" },
+  { start: new Date(2026,9,5),  end: new Date(2026,9,8),  nome: "TREINO 25", periodo: "05 a 08 OUT", url: "https://drive.google.com/file/d/1Q1Ht1YhKE1tp--28f0Y5NIbugkIjZh2J/view?usp=drive_link" },
+  { start: new Date(2026,9,9),  end: new Date(2026,9,12), nome: "TREINO 26", periodo: "09 a 12 OUT", url: "https://drive.google.com/file/d/1mB4CXpdkrA0hDADeLdUO7fEWK1GgM-nL/view?usp=drive_link" },
+  { start: new Date(2026,9,13), end: new Date(2026,9,16), nome: "TREINO 27", periodo: "13 a 16 OUT", url: "https://drive.google.com/file/d/1WtLJBhvT9w2S0ttzzdzp5hjAUFduqYxt/view?usp=drive_link" },
+  { start: new Date(2026,9,17), end: new Date(2026,9,20), nome: "TREINO 28", periodo: "17 a 20 OUT", url: "https://drive.google.com/file/d/16nTwQifDPM77_Jf_FsZMsKuOdcV4ZL7X/view?usp=drive_link" },
+  { start: new Date(2026,9,21), end: new Date(2026,9,24), nome: "TREINO 29", periodo: "21 a 24 OUT", url: "https://drive.google.com/file/d/1e1URGiyH-A1HHP2lDbtLvH10gc_hWauI/view?usp=drive_link" },
+  { start: new Date(2026,9,25), end: new Date(2026,9,28), nome: "TREINO 30", periodo: "25 a 28 OUT", url: "https://drive.google.com/file/d/1ErZWF-4hsbdv6FII9c95AJnu7Ui0n4C5/view?usp=drive_link" },
+  { start: new Date(2026,9,29), end: new Date(2026,10,1), nome: "TREINO 31", periodo: "29 OUT a 01 NOV", url: "https://drive.google.com/file/d/1cquwe0joI_oU7fXFa4Iz_UfCB7rest62/view?usp=drive_link" },
+  { start: new Date(2026,10,2), end: new Date(2026,10,5), nome: "TREINO 32", periodo: "02 a 05 NOV", url: "https://drive.google.com/file/d/1gE9N8Y-g1gBurziu09-8FcAGUTvK4PBQ/view?usp=drive_link" },
+  { start: new Date(2026,10,6), end: new Date(2026,10,9), nome: "TREINO 33", periodo: "06 a 09 NOV", url: "https://drive.google.com/file/d/1AhoOR2eiIUFANFNbPxs6ERX6RqeBg-Ts/view?usp=drive_link" },
+  { start: new Date(2026,10,10),end: new Date(2026,10,13),nome: "TREINO 34", periodo: "10 a 13 NOV", url: "https://drive.google.com/file/d/1xQ2unTnYzvJgWeZJahMY1tz8lV75oDuE/view?usp=drive_link" },
+  { start: new Date(2026,10,14),end: new Date(2026,10,17),nome: "TREINO 35", periodo: "14 a 17 NOV", url: "https://drive.google.com/file/d/1tAe3tfvAQ4DVVkyRSg7qssHUjUDAFhMF/view?usp=drive_link" },
+  { start: new Date(2026,10,18),end: new Date(2026,10,21),nome: "TREINO 36", periodo: "18 a 21 NOV", url: "https://drive.google.com/file/d/1KW7tsyyNYmOzKzHsL80DfsG6UpNRzGr_/view?usp=drive_link" },
+  { start: new Date(2026,10,22),end: new Date(2026,10,25),nome: "TREINO 37", periodo: "22 a 25 NOV", url: "https://drive.google.com/file/d/1tf2URE_egnzYwt4UqmNjX2EMpX9zFkH8/view?usp=drive_link" },
+  { start: new Date(2026,10,26),end: new Date(2026,10,29),nome: "TREINO 38", periodo: "26 a 29 NOV", url: "https://drive.google.com/file/d/11rYyqIv7aSeqQ5f5UXh7967saxrLzOcZ/view?usp=drive_link" },
+  { start: new Date(2026,10,30),end: new Date(2026,11,3), nome: "TREINO 39", periodo: "30 NOV a 03 DEZ", url: "https://drive.google.com/file/d/1W6I6M8h2FvEDm0zvzL_5jgFl83g7Rwkw/view?usp=drive_link" },
+  { start: new Date(2026,11,4), end: new Date(2026,11,7), nome: "TREINO 40", periodo: "04 a 07 DEZ", url: "https://drive.google.com/file/d/1SwzOKbqAkSqhG7RmJNXzdAClcIW7-WKw/view?usp=drive_link" },
+  { start: new Date(2026,11,8), end: new Date(2026,11,11),nome: "TREINO 41", periodo: "08 a 11 DEZ", url: "https://drive.google.com/file/d/1_Rt0dOxwOxcxp_YAdsDhX3EwpDJTjvXQ/view?usp=drive_link" },
+  { start: new Date(2026,11,12),end: new Date(2026,11,15),nome: "TREINO 42", periodo: "12 a 15 DEZ", url: "https://drive.google.com/file/d/14VtEp2fOzJenwVTiaZlKFCVddM-NOX_P/view?usp=drive_link" },
+  { start: new Date(2026,11,16),end: new Date(2026,11,19),nome: "TREINO 43", periodo: "16 a 19 DEZ", url: "https://drive.google.com/file/d/14vtpV9_JGXpa4gHzcV-F8eMyMtilrOVe/view?usp=drive_link" },
+  { start: new Date(2026,11,20),end: new Date(2026,11,23),nome: "TREINO 44", periodo: "20 a 23 DEZ", url: "https://drive.google.com/file/d/1VGsDXlQYI13TLMVca-3uK5Ka_tfzGnh7/view?usp=drive_link" },
+  { start: new Date(2026,11,24),end: new Date(2026,11,27),nome: "TREINO 45", periodo: "24 a 27 DEZ", url: "https://drive.google.com/file/d/1oO84-HniDvBcnwQJYOsTobgtBMEjtYB0/view?usp=drive_link" },
+  { start: new Date(2026,11,28),end: new Date(2026,11,31),nome: "TREINO 46", periodo: "28 a 31 DEZ", url: "https://drive.google.com/file/d/1Al0i-Kjc3TIP4s6hF8sfpIPqzSOTkhdG/view?usp=drive_link" },
 ];
 
-var SENHA      = '5ciatci2026';
-var URL_DEST   = 'https://paineltci.vercel.app/';
-var STORAGE_KEY = 'tci2026_sessao';
+const MESES = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
 
-/* ─── AUTO-LOGIN ao carregar a página ──────────── */
-window.addEventListener('DOMContentLoaded', function () {
-  try {
-    var salvo = localStorage.getItem(STORAGE_KEY);
-    if (salvo) {
-      var dados = JSON.parse(salvo);
-      // Valida se o RE ainda está na lista autorizada
-      var policial = buscarPolicial(dados.re);
-      if (policial && dados.senha === SENHA) {
-        // Preenche os campos (visualmente) e entra direto
-        document.getElementById('inp-re').value    = dados.re;
-        document.getElementById('inp-senha').value = dados.senha;
-        exibirBoasVindas(policial);
-        return;
-      } else {
-        // Dado salvo inválido — limpa
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-  } catch (e) {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-});
-
-/* ─── BUSCA POLICIAL POR RE ─────────────────────── */
-function buscarPolicial(re) {
-  var reNorm = re.replace(/\s/g, '').toUpperCase();
-  for (var i = 0; i < POLICIAIS.length; i++) {
-    if (POLICIAIS[i].re.replace(/\s/g, '').toUpperCase() === reNorm) {
-      return POLICIAIS[i];
-    }
-  }
-  return null;
+function treinoAtual() {
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  return TREINOS.find(t => {
+    const s = new Date(t.start); s.setHours(0,0,0,0);
+    const e = new Date(t.end);   e.setHours(23,59,59,999);
+    return hoje >= s && hoje <= e;
+  }) || null;
 }
 
-/* ─── LOGIN ─────────────────────────────────────── */
-function fazerLogin() {
-  var re    = document.getElementById('inp-re').value.trim().replace(/\s/g,'').toUpperCase();
-  var senha = document.getElementById('inp-senha').value;
-  var card  = document.getElementById('login-card');
-  var erro  = document.getElementById('erro-msg');
-  var lembrar = document.getElementById('chk-lembrar').checked;
+function init() {
+  const t = treinoAtual();
+  const nomEl  = document.getElementById('treino-nome');
+  const perEl  = document.getElementById('treino-periodo');
+  const semEl  = document.getElementById('treino-sem');
+  const btnEl  = document.getElementById('btn-treino-atual');
 
-  var policial = buscarPolicial(re);
-
-  if (!policial || senha !== SENHA) {
-    erro.classList.add('show');
-    card.classList.remove('shake');
-    void card.offsetWidth;
-    card.classList.add('shake');
-    setTimeout(function(){ card.classList.remove('shake'); }, 450);
-    return;
-  }
-
-  erro.classList.remove('show');
-
-  // Salva no localStorage se marcado
-  if (lembrar) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ re: policial.re, senha: senha }));
-    } catch (e) { /* sem suporte ao storage — ignora */ }
+  if (t) {
+    nomEl.textContent  = t.nome;
+    perEl.textContent  = t.periodo;
+    semEl.textContent  = '2º SEMESTRE 2026';
+    btnEl.href = t.url;
   } else {
-    localStorage.removeItem(STORAGE_KEY);
+    nomEl.textContent  = 'Sem treino hoje';
+    perEl.textContent  = 'Fora do período TCI';
+    semEl.textContent  = '';
+    btnEl.style.opacity = '.45';
+    btnEl.style.pointerEvents = 'none';
   }
-
-  exibirBoasVindas(policial);
 }
 
-/* ─── BOAS-VINDAS ───────────────────────────────── */
-function exibirBoasVindas(pol) {
-  document.getElementById('login-screen').style.display = 'none';
+function abrirCalendario() {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const mesesMap = {};
 
-  document.getElementById('wc-nome').textContent = pol.nome;
-  document.getElementById('wc-grad').textContent = pol.grad;
+  TREINOS.forEach(t => {
+    const m = t.start.getMonth();
+    if (!mesesMap[m]) mesesMap[m] = [];
+    mesesMap[m].push(t);
+  });
 
-  var overlay = document.getElementById('welcome-overlay');
-  overlay.classList.add('show');
+  let html = '';
+  Object.keys(mesesMap).sort((a,b)=>a-b).forEach(m => {
+    html += `<div class="mes-bloco"><div class="mes-header">${MESES[m]}</div>`;
+    mesesMap[m].forEach(t => {
+      const s = new Date(t.start); s.setHours(0,0,0,0);
+      const e = new Date(t.end);   e.setHours(23,59,59,999);
+      const ativo = hoje >= s && hoje <= e;
+      html += `<a class="treino-item${ativo?' ativo':''}" href="${t.url}" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="ti-nome">${t.nome}${ativo?' ◀ HOJE':''}</div>
+          <div class="ti-periodo">${t.periodo}</div>
+        </div>
+        <div class="ti-badge">${ativo?'EM VIGOR':'ACESSAR'}</div>
+      </a>`;
+    });
+    html += `</div>`;
+  });
 
-  setTimeout(function(){
-    document.getElementById('wc-bar').style.width = '100%';
-  }, 60);
-
-  setTimeout(function(){
-    overlay.classList.remove('show');
-    abrirPainel();
-  }, 2300);
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-cal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-/* ─── PAINEL ────────────────────────────────────── */
-function abrirPainel() {
-  var app   = document.getElementById('app-screen');
-  var frame = document.getElementById('tci-frame');
-  frame.src = URL_DEST;
-  app.style.display = 'block';
-  document.getElementById('btn-sair').classList.add('show');
+function fecharCalendario() {
+  document.getElementById('modal-cal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-/* ─── LOGOUT ────────────────────────────────────── */
-function fazerLogout() {
-  if (!confirm('Deseja sair e trocar de usuário?')) return;
-
-  // Remove sessão salva
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-
-  // Reseta tela
-  document.getElementById('app-screen').style.display  = 'none';
-  document.getElementById('btn-sair').classList.remove('show');
-  document.getElementById('tci-frame').src = '';
-  document.getElementById('inp-re').value    = '';
-  document.getElementById('inp-senha').value = '';
-  document.getElementById('login-screen').style.display = 'flex';
-}
-
-/* ─── ENTER ─────────────────────────────────────── */
-document.addEventListener('keydown', function(e){
-  if (e.key === 'Enter') fazerLogin();
+document.getElementById('modal-cal').addEventListener('click', function(e) {
+  if (e.target === this) fecharCalendario();
 });
+
+function abrirPop() {
+  document.getElementById('modal-pop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function fecharPop() {
+  document.getElementById('modal-pop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modal-pop').addEventListener('click', function(e) {
+  if (e.target === this) fecharPop();
+});
+
+init();
 </script>
 </body>
 </html>
